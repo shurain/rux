@@ -56,6 +56,11 @@ class RuxHtmlRenderer(HtmlRenderer, SmartyPants):
 
         return highlight(text, lexer, formatter)
 
+    def image(self, link, title, alt):
+        pattern = '<a href="{0}"  class="fancybox">'\
+            '<img src="{0}" title="{1}" alt="{2}"/></a>'
+        return pattern.format(link, title, alt)
+
 
 class Parser(object):
     """Usage::

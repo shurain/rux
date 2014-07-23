@@ -1,3 +1,9 @@
+v0.6.6
+------
+
+- fancybox support for images
+- update default theme `clr`: add nprogress & fancybox
+
 v0.6.5
 ------
 
