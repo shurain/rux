@@ -15,8 +15,7 @@ from .exceptions import *
 import libparser
 
 import houdini
-import misaka
-from misaka import HtmlRenderer, SmartyPants
+import markdown as md
 from pygments import highlight
 from pygments.lexers import get_lexer_by_name
 from pygments.formatters import HtmlFormatter
@@ -25,36 +24,6 @@ from pygments.util import ClassNotFound
 src_ext_len = len(src_ext)  # cache this, call only once
 
 to_unicode = lambda string: string.decode(charset)
-
-
-class RuxHtmlRenderer(HtmlRenderer, SmartyPants):
-    """misaka render with color codes feature"""
-
-    def _code_no_lexer(self, text):
-        # encode to utf8 string
-        text = text.encode(charset).strip()
-        return(
-            """
-            <div class="highlight">
-              <pre><code>%s</code></pre>
-            </div>
-            """ % houdini.escape_html(text)
-        )
-
-    def block_code(self, text, lang):
-        """text: unicode text to render"""
-
-        if not lang:
-            return self._code_no_lexer(text)
-
-        try:
-            lexer = get_lexer_by_name(lang, stripall=True)
-        except ClassNotFound:  # lexer not found, use plain text
-            return self._code_no_lexer(text)
-
-        formatter = HtmlFormatter()
-
-        return highlight(text, lexer, formatter)
 
 
 class Parser(object):
@@ -70,16 +39,15 @@ class Parser(object):
         """Initialize the parser, set markdown render handler as
         an attribute `markdown` of the parser"""
         render = RuxHtmlRenderer()  # initialize the color render
-        extensions = (
-            misaka.EXT_FENCED_CODE |
-            misaka.EXT_NO_INTRA_EMPHASIS |
-            misaka.EXT_AUTOLINK
-        )
-
-        self.markdown = misaka.Markdown(render, extensions=extensions)
+        self.extensions = [
+            'markdown.extensions.footnotes',
+            'markdown.extensions.smarty',
+            'markdown.extensions.tables',
+            'markdown.extensions.fenced_code',
+        ]
 
     def parse_markdown(self, markdown):
-        return self.markdown.render(markdown)
+        return md.markdown(markdown, extensions=self.extensions)
 
     def parse(self, source):
         """Parse ascii post source, return dict"""
@@ -96,8 +64,8 @@ class Parser(object):
                                                       markdown))
 
         # render to html
-        html = self.markdown.render(markdown)
-        summary = self.markdown.render(markdown[:200])
+        html = md.markdown(markdown, extensions=self.extensions)
+        summary = md.markdown(markdown[:200], extensions=self.extensions)
 
         return {
             'title': title,

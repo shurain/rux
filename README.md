@@ -5,6 +5,10 @@ Micro & Fast static blog generator (markdown => html).
 
 latest version: v0.6.5-Beta
 
+Fork of the original Rux.
+This version handles markdown using [Python-Markdown](https://pythonhosted.org/Markdown/index.html) instead of [Misaka](http://misaka.61924.nl/).
+This was done to support footnote features.
+
 Features
 --------
 
