@@ -38,7 +38,6 @@ class Parser(object):
     def __init__(self):
         """Initialize the parser, set markdown render handler as
         an attribute `markdown` of the parser"""
-        render = RuxHtmlRenderer()  # initialize the color render
         self.extensions = [
             'markdown.extensions.footnotes',
             'markdown.extensions.smarty',
